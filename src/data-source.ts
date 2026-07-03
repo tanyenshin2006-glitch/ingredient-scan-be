@@ -1,7 +1,8 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
-import { User } from './entities/User';
-import { ScanHistory } from './entities/ScanHistory';
+import { User } from './entities/User.js';
+import { ScanHistory } from './entities/ScanHistory.js';
+import { Ingredient } from './entities/Ingredient.js';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
@@ -12,5 +13,5 @@ export const AppDataSource = new DataSource({
   database: 'ingredient_scan',
   synchronize: true,
   logging: true,
-  entities: [User, ScanHistory],
+  entities: [User, ScanHistory, Ingredient],
 });

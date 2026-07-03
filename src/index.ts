@@ -3,6 +3,7 @@ import 'dotenv/config';
 import 'reflect-metadata';
 import { AppDataSource } from './data-source.js';
 import axios from 'axios';
+import { Ingredient } from './entities/Ingredient.js';
 
 const app = express();
 const port = 3000;
@@ -33,8 +34,24 @@ app.post('/api/analyse-ingredients', async (req, res) => {
   }
 });
 
+app.post('/api/ingredients', async (req, res) => {
+  const { name, description, safety_notes, is_common_allergen, embedding } = req.body;
+
+  try {
+    const repo = AppDataSource.getRepository(Ingredient);
+    await repo.upsert(
+      { name, description, safety_notes, is_common_allergen, embedding },
+      { conflictPaths: ['name'], skipUpdateIfNoValuesChanged: true }
+    );
+    res.json({ success: true });
+  } catch (error: unknown) {
+    console.error('Failed to save ingredient:', error);
+    res.status(500).json({ error: 'Failed to save ingredient' });
+  }
+});
+
 AppDataSource.initialize()
-  .then(() => {
+  .then(async () => {
     console.log('Database connected');
     app.listen(port, () => {
       console.log(`Server running on port ${port}`);
