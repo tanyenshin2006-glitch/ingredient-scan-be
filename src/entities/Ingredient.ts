@@ -8,10 +8,10 @@ export class Ingredient {
     @Column({ type: 'varchar', unique: true })
     name: string;
 
-     @Column({ type: 'text' })
+    @Column({ type: 'text' })
     description: string;
 
-     @Column({ type: 'text' })
+    @Column({ type: 'text' })
     safety_notes: string;
 
     @Column({ type: 'boolean', default: false })
