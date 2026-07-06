@@ -34,6 +34,8 @@ app.post('/api/analyse-ingredients', async (req, res) => {
   }
 });
 
+
+//For seed.ts script
 app.post('/api/ingredients', async (req, res) => {
   const { name, description, safety_notes, is_common_allergen, embedding } = req.body;
 
@@ -49,6 +51,25 @@ app.post('/api/ingredients', async (req, res) => {
     res.status(500).json({ error: 'Failed to save ingredient' });
   }
 });
+
+app.post('/api/ingredients/search', async (req, res) => {
+  const { embedding, limit = 5, maxDistance = 0.55 } = req.body;
+  try{
+    const results= await AppDataSource.query(
+      `SELECT name, description, safety_notes, is_common_allergen, embedding <-> $1::vector AS distance
+      FROM ingredient
+      WHERE embedding <-> $1::vector < $3
+      ORDER BY embedding <-> $1::vector
+      LIMIT $2`,
+      [JSON.stringify(embedding), limit, maxDistance]
+    );
+    res.json(results);
+    console.log(results)
+  }catch (error:unknown) {
+    console.error('Vector search failed:', error);
+    res.status(500).json({ error: 'Vector search failed' })
+  }
+})
 
 AppDataSource.initialize()
   .then(async () => {

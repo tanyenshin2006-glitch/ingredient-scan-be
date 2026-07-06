@@ -12,6 +12,6 @@ export const AppDataSource = new DataSource({
   password: 'Friday5!',
   database: 'ingredient_scan',
   synchronize: true,
-  logging: true,
+  logging: false,
   entities: [User, ScanHistory, Ingredient],
 });
